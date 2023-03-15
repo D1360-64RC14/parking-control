@@ -50,7 +50,7 @@ public class ParkingSpotController {
     public ResponseEntity<Object> saveSpot(
             @RequestBody @Valid ParkingSpotDTO parkingSpotDTO
     ) {
-        if (service.existsByLicensePlateCar(parkingSpotDTO.getLicensePlateCar())) {
+        if (service.existsByCarLicensePlate(parkingSpotDTO.getCar().getLicensePlate())) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body("Conflict: License plate is already in use!");
@@ -66,8 +66,7 @@ public class ParkingSpotController {
                     .body("Conflict: Parking apot already registered for this apartment/block!");
         }
 
-        var parkingSpot = new ParkingSpotModel();
-        BeanUtils.copyProperties(parkingSpotDTO, parkingSpot);
+        var parkingSpot = parkingSpotDTO.getParkingSpotModel();
 
         var currentUtcDate = LocalDateTime.now(ZoneOffset.UTC);
         parkingSpot.setRegistrationDate(currentUtcDate);
