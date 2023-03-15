@@ -1,6 +1,7 @@
 package com.diegogarcia.parkingcontrol.services;
 
 import com.diegogarcia.parkingcontrol.models.ParkingSpotModel;
+import com.diegogarcia.parkingcontrol.repositories.CarRepository;
 import com.diegogarcia.parkingcontrol.repositories.ParkingSpotRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -12,39 +13,41 @@ import java.util.UUID;
 
 @Service
 public class ParkingSpotService {
-    final ParkingSpotRepository repository;
+    final ParkingSpotRepository spotRepository;
+    final CarRepository carRepository;
 
-    public ParkingSpotService(ParkingSpotRepository repository) {
-        this.repository = repository;
+    public ParkingSpotService(ParkingSpotRepository spotRepository, CarRepository carRepository) {
+        this.spotRepository = spotRepository;
+        this.carRepository = carRepository;
     }
 
     @Transactional
     public ParkingSpotModel save(ParkingSpotModel parkingSpotModel) {
-        return repository.save(parkingSpotModel);
+        return spotRepository.save(parkingSpotModel);
     }
 
     public boolean existsByCarLicensePlate(String licensePlate) {
-        return repository.existsByCarLicensePlate(licensePlate);
+        return carRepository.existsByLicensePlate(licensePlate);
     }
 
     public boolean existsByParkingSpotNumber(String parkingSpotNumber) {
-        return repository.existsByParkingSpotNumber(parkingSpotNumber);
+        return spotRepository.existsByParkingSpotNumber(parkingSpotNumber);
     }
 
     public boolean existsByApartmentAndBlock(String apartment, String block) {
-        return repository.existsByApartmentAndBlock(apartment, block);
+        return spotRepository.existsByApartmentAndBlock(apartment, block);
     }
 
     public Page<ParkingSpotModel> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+        return spotRepository.findAll(pageable);
     }
 
     public Optional<ParkingSpotModel> findById(UUID id) {
-        return repository.findById(id);
+        return spotRepository.findById(id);
     }
 
     @Transactional
     public void deleteById(UUID id) {
-        repository.deleteById(id);
+        spotRepository.deleteById(id);
     }
 }
