@@ -1,6 +1,7 @@
 package com.diegogarcia.parkingcontrol.controllers;
 
 import com.diegogarcia.parkingcontrol.dtos.ParkingSpotDTO;
+import com.diegogarcia.parkingcontrol.errors.ErrorResponse;
 import com.diegogarcia.parkingcontrol.models.ParkingSpotModel;
 import com.diegogarcia.parkingcontrol.services.ParkingSpotService;
 import jakarta.validation.Valid;
@@ -51,19 +52,20 @@ public class ParkingSpotController {
             @RequestBody @Valid ParkingSpotDTO parkingSpotDTO
     ) {
         if (service.existsByCarLicensePlate(parkingSpotDTO.getCar().getLicensePlate())) {
-            return ResponseEntity
+            return ErrorResponse
+                    .description("License plate is already in use!")
                     .status(HttpStatus.CONFLICT)
-                    .body("Conflict: License plate is already in use!");
+                    .build();
         }
         if (service.existsByParkingSpotNumber(parkingSpotDTO.getParkingSpotNumber())) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("Conflict: Parking spot is already in use!");
+            return ErrorResponse.status(HttpStatus.CONFLICT)
+                    .description("Parking spot is already in use!")
+                    .build();
         }
         if (service.existsByApartmentAndBlock(parkingSpotDTO.getApartment(), parkingSpotDTO.getBlock())) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("Conflict: Parking apot already registered for this apartment/block!");
+            return ErrorResponse.status(HttpStatus.CONFLICT)
+                    .description("Parking apot already registered for this apartment/block!")
+                    .build();
         }
 
         var parkingSpot = parkingSpotDTO.getParkingSpotModel();
